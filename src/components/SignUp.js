@@ -1,11 +1,27 @@
 import React, { useState } from 'react';
+import {useHistory} from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
 
 export default function SignIn(){
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');    
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const history = useHistory();
+
+    function verifyInputs(){
+        if (name === '' || email === '' || password === '' || passwordConfirmation === '' )
+            alert("Preencha todos os campos");
+        else{
+            const request = axios.post("http://localhost:3000/api/users/sign-up", {name, email, password, passwordConfirmation});
+            request.then(() => {
+                history.push('/principal');
+            }).catch(() => {
+                alert("Email já cadastrado");
+            });
+        }
+    }
     
     return(
         <>
@@ -22,7 +38,7 @@ export default function SignIn(){
                 <input  type="password" name="senha" placeholder='Confirme a senha' 
                         onChange={e => setPasswordConfirmation(e.target.value)}
                         value={passwordConfirmation} />
-                <button type="submit" >Cadastrar</button>
+                <button type="submit" onClick={verifyInputs} >Cadastrar</button>
             </Forms>
         </>
     );
